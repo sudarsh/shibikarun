@@ -3,7 +3,6 @@ import { FeaturedWork } from "@/components/home/FeaturedWork";
 import { PhotographyStrip } from "@/components/home/PhotographyStrip";
 import { LatestStories } from "@/components/home/LatestStories";
 import { safeFetch } from "@/sanity/client";
-import { featuredProjects, staticProjects } from "@/lib/staticProjects";
 import type { SanityDocument } from "@sanity/client";
 
 async function getFeaturedProjects(): Promise<SanityDocument[]> {
@@ -31,22 +30,16 @@ async function getLatestStories(): Promise<SanityDocument[]> {
 }
 
 export default async function HomePage() {
-  const [sanityProjects, photos, stories] = await Promise.all([
+  const [projects, photos, stories] = await Promise.all([
     getFeaturedProjects(),
     getFeaturedPhotos(),
     getLatestStories(),
   ]);
 
-  // Fall back to static data when Sanity isn't connected yet
-  const projects =
-    sanityProjects.length > 0
-      ? sanityProjects
-      : (featuredProjects as unknown as SanityDocument[]);
-
   return (
     <>
       <HeroSection />
-      <FeaturedWork projects={projects} useStatic={sanityProjects.length === 0} />
+      <FeaturedWork projects={projects} useStatic={false} />
       <PhotographyStrip photos={photos} />
       <LatestStories stories={stories} />
     </>
